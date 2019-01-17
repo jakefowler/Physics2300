@@ -32,3 +32,4 @@ while t < 100:
         ball.velocity.z = -ball.velocity.z
     ball.pos = ball.pos + ball.velocity * deltat
     t = t + deltat # update time
+    # Trying out github push
