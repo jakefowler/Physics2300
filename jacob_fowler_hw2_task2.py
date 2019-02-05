@@ -16,44 +16,55 @@ Make sure your python module works in dual-mode: by itself or import to other mo
 """
 # NOTE: You may need to run: $ pip install matplotlib
 
-# Function to calculate projectile motion
-def px(x,v,t,a):
-    return x + v*t + 0.5*a*t**2
+x_velocity = 0
+y_velocity = 0
 
-# Function to plot data
+#x0 = 1.0
+#y0 = 0.0
+
+#ax = 0.0
+#ay = -9.8           # define a constant
+
 def plot_data():
-    pass
+    """
+    Function to plot the data into to the calculate projectile function. 
+    This increments the time and loops until the projectile has a y coordinate of 0.
+    """
+    delt = 0.1
+    t = 0.0
+    x = []
+    y = []
+    intervals = 170
+    for i in range(intervals):
+        x.append(px(x0,vx0,t,ax))
+        y.append(px(y0,vy0,t,ay))
+        t = t + delt
+
+        if y[i + 1] > 0.0:
+        break
+
+
+    plt.plot(x, y)
+    plt.show()
+
+def get_user_input():
+    """
+    Function to get the initial x and y velocity from the user.
+    """
+    global x_velocity = int(input("Please enter the initial horizontal velocity"))
+    global y_velocity = int(input("Please enter the initial vertical velocity"))
+
+
+def calculate_projectile(x,v,t,a):
+    """
+    Function to calculate projectile motion
+    """
+    return x + v*t + 0.5*a*t**2:
 
 # "Main" Function
 def main():
     pass
 
 
-x0 = 1.0
-vx_0 = 70.0         # TODO: capture input
-
-y0 = 0.0
-vy0 = 80.0          # TODO: capture input
-
-ax = 0.0
-ay = -9.8           # define a constant
-
-delt = 0.1
-t = 0.0
-
-x = []
-y = []
-
-intervals = 170
-
-for i in range(interval):
-    x.append(px(x0,vx0,t,ax))
-    y.append(px(y0,vy0,t,ay))
-    t = t + delt
-
-    if y[i + 1] > 0.0:
-       break
 
 
-plt.plot(x, y)
-plt.show()
