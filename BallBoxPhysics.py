@@ -1,8 +1,11 @@
 from vpython import *
 import random
 
+scene.width=1280
+scene.height=720
+
 # box: object
-# size: takes input in vector form (x, y, z)
+# size: takes input in vector form (x, y, z)1
 boxColor = color.blue
 wallR = box(pos = vector(5, 0, 0), color = boxColor, size = vector(0.2, 10, 10))
 wallL = box(pos = vector(-5, 0, 0), color = boxColor, size = vector(0.2, 10, 10))
