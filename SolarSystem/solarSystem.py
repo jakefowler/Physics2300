@@ -5,10 +5,11 @@ import argparse
 import csv
 import pandas as pd
 
-G = 6.67408e-11          # Newton's Gravitational Contant 
+G = 1.36e-34 # Newton's Gravitational Constant in au^3/kg*s
 au = 1.496e+8 # au in kilometers
-sizeScale = 1000
-dt = 6.3e-4
+meters_in_au = 1.496e+11
+size_scale = 1000
+dt = 6.3e-2
 
 
 def readFile(filename):
@@ -18,23 +19,23 @@ def readFile(filename):
     :returns: nothing
     """
     data = pd.read_csv(filename, skiprows=1)
-    initPos = data.iloc[:, 1:4].values
-    initVel = data.iloc[:, 4:7].values
+    init_pos = data.iloc[:, 1:4].values
+    init_vel = data.iloc[:, 4:7].values
     masses = data.iloc[:, -1].astype('float64').values
     print(data)
     print(masses)
-    print(initPos)
-    print(initVel)
-    print(type(initPos[0][0]))
+    print(init_pos)
+    print(init_vel)
+    print(type(init_pos[0][0]))
     print(type(masses[0]))
 
-    return initPos, initVel, masses
+    return init_pos, init_vel, masses
 
-def createPlanets(initPos, initVel, masses):
+def createPlanets(init_pos, init_vel, masses):
     """
     Function to create the vpython spheres for the planets and place them in their initial positions
     The size of the planet will scale with the mass.
-    :param initPos: 3d array with x, y, and z coordinates for each planet
+    :param init_pos: 3d array with x, y, and z coordinates for each planet
     :param masses: masss of each planet in kg
     :return: list of vpython spheres representing the planets
     """
@@ -42,8 +43,8 @@ def createPlanets(initPos, initVel, masses):
     radius = [2439.7, 6051.8, 6378.1, 3396.2, 71492, 60268, 25559, 24764, 1195]
     
     for i in range(len(masses)):
-        planets.append(sphere(pos=vector(initPos[i][0], initPos[i][1], initPos[i][2]), radius=sizeScale*radius[i]/au, 
-                        mass=masses[i], velocity=vector(initVel[i][0], initVel[i][1], initVel[i][2])))
+        planets.append(sphere(pos=vector(init_pos[i][0], init_pos[i][1], init_pos[i][2]), radius=size_scale*radius[i]/au, 
+                        mass=masses[i], velocity=vector(init_vel[i][0], init_vel[i][1], init_vel[i][2])))
     planets[0].color = vector(0.5, 0.5, 0.5) # mercury
     planets[0].texture = textures.rough 
     planets[1].color = vector(1, 0.8, 0.4) # venus
@@ -74,8 +75,8 @@ def simulateOrbitEulers(objects):
             i.acceleration = vector(0,0,0)
             for j in objects:
                 if i != j:
-                    dist = (j.pos - i.pos) * au
-                    i.acceleration = i.acceleration + G * j.mass * dist / mag(dist)**3 * 0.000577548
+                    dist = j.pos - i.pos
+                    i.acceleration = i.acceleration + G * j.mass * dist / mag(dist)**3
         for i in objects:
             i.velocity = i.velocity + i.acceleration*dt
             i.pos = i.pos + i.velocity * dt
@@ -88,13 +89,13 @@ def simulateOrbitFrog(objects):
     """
     firstStep = 0
     while True:
-        rate(1000)
+        rate(100)
         for i in objects:
             i.acceleration = vector(0,0,0)
             for j in objects:
                 if i != j:
-                    distance = j.pos - i.pos
-                    i.acceleration = i.acceleration + G * j.mass * distance / mag(distance)**3
+                    distance = (j.pos - i.pos) #* meters_in_au
+                    i.acceleration = i.acceleration + G * j.mass * distance / mag(distance)**3 #/ meters_in_au**2**2 #/ 1.731e+6
         if firstStep == 0:
             for i in objects:
                 i.velocity = i.velocity + i.acceleration*dt/2.0
@@ -116,15 +117,15 @@ def main():
     if not filename:
         filename = "solar_system_points.csv"
 
-    initPos, initVel, masses = readFile(filename)
+    init_pos, init_vel, masses = readFile(filename)
 
-    objects = createPlanets(initPos, initVel, masses)
-    sun = sphere(pos=vector(0, 0, 0), radius=(sizeScale/100)*695510/au, color=color.yellow, texture=textures.flower, mass=1.9891e+30, velocity=vector(0, 0, 0)) # scaled the sun down
+    objects = createPlanets(init_pos, init_vel, masses)
+    sun = sphere(pos=vector(0, 0, 0), radius=(size_scale/100)*695510/au, color=color.yellow, texture=textures.flower, mass=1.99e+30, velocity=vector(0, 0, 0)) # scaled the sun down
     objects.append(sun)
-    initVel = list(initVel).append([0, 0, 0]) # add the sun to the velocity list
+    init_vel = list(init_vel).append([0, 0, 0]) # add the sun to the velocity list
     masses = list(masses).append(1.99e+30) # add the mass of the sun to the array
 
-    simulateOrbitEulers(objects)
+    simulateOrbitFrog(objects)
 
 
 
