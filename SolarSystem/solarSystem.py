@@ -1,22 +1,19 @@
 from vpython import *
-import numpy as np
-from matplotlib import pyplot as plt
 import argparse
-import csv
 import pandas as pd
 
 G = 1.36e-34 # Newton's Gravitational Constant in au^3/kg*s
 au = 1.496e+8 # au in kilometers
-meters_in_au = 1.496e+11
 size_scale = 1000
-dt = 6.3e-2
-
+dt = 1 
 
 def readFile(filename):
     """
     Function to take a filename of a csv file and read it in. Skips the header of the csv file.
     :param filename: file containing the planets name, x, y, z corrdinates in au, velocity in x, y, z in au/day, and mass. 
-    :returns: nothing
+    :returns init_pos: 3d array holding the initial x, y, and z coordinates for the planets
+             init_vel: 3d array holding the initial x, y, and z velocities for the planets
+             masses: array holding the masses for each of the planets
     """
     data = pd.read_csv(filename, skiprows=1)
     init_pos = data.iloc[:, 1:4].values
@@ -34,9 +31,9 @@ def readFile(filename):
 def createPlanets(init_pos, init_vel, masses):
     """
     Function to create the vpython spheres for the planets and place them in their initial positions
-    The size of the planet will scale with the mass.
+    The size of the planet will scale with the mass except jupiter and saturn are scaled down.
     :param init_pos: 3d array with x, y, and z coordinates for each planet
-    :param masses: masss of each planet in kg
+    :param masses: mass of each planet in kg
     :return: list of vpython spheres representing the planets
     """
     planets = []
@@ -54,7 +51,9 @@ def createPlanets(init_pos, init_vel, masses):
     planets[3].texture = textures.stones
     planets[4].texture = textures.wood_old # jupiter
     planets[4].color = vector(0.7, 0.8, 0.7)
+    planets[4].radius = planets[4].radius / 4 # scale down the size of jupiter 
     planets[5].color = vector(1, 0.9, 0.7) # saturn
+    planets[5].radius = planets[5].radius / 4 # scale down the size of saturn 
     planets[5].texture = textures.wood
     planets[6].color = vector(0.7, 0.8, 0.8) # uranus
     planets[7].color = vector(0.7, 0.8, 1) # neptune
@@ -69,7 +68,8 @@ def simulateOrbitEulers(objects):
     :param objects: list that hods all of the vpython spheres
     :returns: nothing
     """
-    while True:
+    t = 0
+    while t < 3650000000: # days in 10 million years
         rate(100)
         for i in objects:
             i.acceleration = vector(0,0,0)
@@ -77,9 +77,9 @@ def simulateOrbitEulers(objects):
                 if i != j:
                     dist = j.pos - i.pos
                     i.acceleration = i.acceleration + G * j.mass * dist / mag(dist)**3
-        for i in objects:
             i.velocity = i.velocity + i.acceleration*dt
             i.pos = i.pos + i.velocity * dt
+        t += dt
 
 def simulateOrbitFrog(objects):
     """
@@ -88,14 +88,15 @@ def simulateOrbitFrog(objects):
     :returns: nothing
     """
     firstStep = 0
-    while True:
+    t = 0
+    while t < 3650000000: # days in 10 million years
         rate(100)
         for i in objects:
             i.acceleration = vector(0,0,0)
             for j in objects:
                 if i != j:
-                    distance = (j.pos - i.pos) #* meters_in_au
-                    i.acceleration = i.acceleration + G * j.mass * distance / mag(distance)**3 #/ meters_in_au**2**2 #/ 1.731e+6
+                    distance = (j.pos - i.pos)
+                    i.acceleration = i.acceleration + G * j.mass * distance / mag(distance)**3 
         if firstStep == 0:
             for i in objects:
                 i.velocity = i.velocity + i.acceleration*dt/2.0
@@ -107,27 +108,26 @@ def simulateOrbitFrog(objects):
                 i.pos = i.pos + i.velocity*dt
 
 def main():
+    """
+    Function to create the argument parser and get everything going
+    """
     parser = argparse.ArgumentParser(description="Solar System Simulation")
 
     parser.add_argument("--file", "-f", action="store", dest="filename", type=str, required=False, 
         help="Filename for csv file containing the planets name, x, y, z corrdinates in au, velocity in x, y, z in au/day, and mass. \
-        File should be in the same directory or include the filepath.")
+        File should be in the same directory or include the filepath. The header is skipped when read in.")
     args = parser.parse_args()
     filename = args.filename
     if not filename:
         filename = "solar_system_points.csv"
 
-    init_pos, init_vel, masses = readFile(filename)
+    init_pos, init_vel, masses = readFile(filename) # gets the information out of the file
 
-    objects = createPlanets(init_pos, init_vel, masses)
-    sun = sphere(pos=vector(0, 0, 0), radius=(size_scale/100)*695510/au, color=color.yellow, texture=textures.flower, mass=1.99e+30, velocity=vector(0, 0, 0)) # scaled the sun down
+    objects = createPlanets(init_pos, init_vel, masses) # adds all the data to the vpython objects when creating them
+    sun = sphere(pos=vector(0, 0, 0), radius=(size_scale/75)*695510/au, color=color.yellow, texture=textures.flower, mass=1.99e+30, velocity=vector(0, 0, 0)) # scaled the sun down
     objects.append(sun)
-    init_vel = list(init_vel).append([0, 0, 0]) # add the sun to the velocity list
-    masses = list(masses).append(1.99e+30) # add the mass of the sun to the array
-
     simulateOrbitFrog(objects)
-
-
+    simulateOrbitEulers(objects)
 
 if __name__ == "__main__":
     main()
