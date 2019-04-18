@@ -6,6 +6,8 @@ G = 1.36e-34 # Newton's Gravitational Constant in au^3/kg*s
 au = 1.496e+8 # au in kilometers
 size_scale = 1000
 dt = 1 
+objects = []
+object_names = ["mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "sun"]
 
 def readFile(filename):
     """
@@ -41,7 +43,7 @@ def createPlanets(init_pos, init_vel, masses):
     
     for i in range(len(masses)):
         planets.append(sphere(pos=vector(init_pos[i][0], init_pos[i][1], init_pos[i][2]), radius=size_scale*radius[i]/au, 
-                        mass=masses[i], velocity=vector(init_vel[i][0], init_vel[i][1], init_vel[i][2])))
+                        mass=masses[i], velocity=vector(init_vel[i][0], init_vel[i][1], init_vel[i][2]), name=object_names[i]))
     planets[0].color = vector(0.5, 0.5, 0.5) # mercury
     planets[0].texture = textures.rough 
     planets[1].color = vector(1, 0.8, 0.4) # venus
@@ -107,12 +109,36 @@ def simulateOrbitFrog(objects):
                 i.velocity = i.velocity + i.acceleration*dt
                 i.pos = i.pos + i.velocity*dt
 
-def main():
+def sliderMoved(slider):
     """
-    Function to create the argument parser and get everything going
+    Function that gets called when a slider changes. This updates the mass of the object the slider refers to to the value of the slider.
+    :param slider: slider object that gets called when a slider changes
+    :return: nothing
+    """
+    print(slider.value)
+    for obj in objects:
+        if obj.name is slider.name:
+            obj.mass = slider.value
+
+def createSliders():
+    """
+    Function that creates the sliders for each of the planets mass to allow the user to adjust.
+    param: nothing
+    retunrs: nothing
+    """
+    global objects
+    scene.append_to_caption('\nDrag the sliders to adjust the mass\n\n')
+    for obj in objects:
+        slider( bind=sliderMoved, name=obj.name, length=scene.width - 40, max=2e+31, value=obj.mass)
+        scene.append_to_caption(obj.name.capitalize(),'\n\n')
+    
+def parseArguments():
+    """
+    Function that parses the arguments and returns the filename entered. If no filename was entered it gives the default one.
+    :param: none
+    :returns filename: string of filename
     """
     parser = argparse.ArgumentParser(description="Solar System Simulation")
-
     parser.add_argument("--file", "-f", action="store", dest="filename", type=str, required=False, 
         help="Filename for csv file containing the planets name, x, y, z corrdinates in au, velocity in x, y, z in au/day, and mass. \
         File should be in the same directory or include the filepath. The header is skipped when read in.")
@@ -121,11 +147,20 @@ def main():
     if not filename:
         filename = "solar_system_points.csv"
 
+    return filename
+
+def main():
+    """
+    Function to create the argument parser and get everything going
+    """
+    global objects
+    filename = parseArguments()
     init_pos, init_vel, masses = readFile(filename) # gets the information out of the file
 
     objects = createPlanets(init_pos, init_vel, masses) # adds all the data to the vpython objects when creating them
-    sun = sphere(pos=vector(0, 0, 0), radius=(size_scale/75)*695510/au, color=color.yellow, texture=textures.flower, mass=1.99e+30, velocity=vector(0, 0, 0)) # scaled the sun down
+    sun = sphere(pos=vector(0, 0, 0), radius=(size_scale/75)*695510/au, color=color.yellow, texture=textures.flower, mass=1.99e+30, velocity=vector(0, 0, 0), name="sun") # scaled the sun down
     objects.append(sun)
+    createSliders()
     simulateOrbitFrog(objects)
     simulateOrbitEulers(objects)
 
