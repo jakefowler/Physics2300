@@ -63,7 +63,7 @@ def set_scene():
     stand_right.pos.x += offset # moves it to the right based on how long the arms and the radius of the ball
     box(pos=vector(0, -(l + 2*R) - W, 0), size=vector(R*70, W, R*10)) # ground   
  
-def animatePendulums():
+def animate_pendulums():
     # Set up initial values
     angles_middle = np.array([np.pi*179/180, 0], float)
     angles_right = np.array([np.pi*30/180, 0], float)
@@ -103,7 +103,7 @@ def animatePendulums():
             t += dt
     return time_values, theta_middle, theta_right, theta_left
 
-def plotPoints(time_values, theta_middle, theta_right, theta_left):
+def plot_points(time_values, theta_middle, theta_right, theta_left):
     plt.plot(time_values, theta_middle, label="Middle Pendulum")
     plt.plot(time_values, theta_right, label="Right Pendulum")
     plt.plot(time_values, theta_left, label="Left Pendulum")
@@ -118,8 +118,8 @@ def main():
     Function that gets everything going
     """
     set_scene()
-    time_values, theta_middle, theta_right, theta_left = animatePendulums() 
-    plotPoints(time_values, theta_middle, theta_right, theta_left)
+    time_values, theta_middle, theta_right, theta_left = animate_pendulums() 
+    plot_points(time_values, theta_middle, theta_right, theta_left)
     
 if __name__ == "__main__":
     main()
