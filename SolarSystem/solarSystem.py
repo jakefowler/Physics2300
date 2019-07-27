@@ -46,6 +46,8 @@ def createObjects(init_pos, init_vel, masses):
     """
     global objects
     radius = [2439.7, 6051.8, 6378.1, 3396.2, 71492, 60268, 25559, 24764, 1195]
+    colors = [vector(0.5, 0.5, 0.5), vector(1, 0.8, 0.4), color.blue, vector(0.8, 0.1, 0.1), 
+              vector(0.7, 0.8, 0.7), vector(1, 0.9, 0.7), vector(0.7, 0.8, 0.8), vector(0.7, 0.8, 1), vector(0.7, 0.6, 0.5)]
 
     sun = sphere(pos=vector(0, 0, 0), radius=(size_scale/75)*695510/km_in_au, color=color.yellow, texture=textures.flower, mass=1.99e+30, 
                  velocity=vector(0, 0, 0), name="sun", make_trail=True, retain=200, trail_type="points", trail_radius=0.02) # scaled the sun down
@@ -54,24 +56,17 @@ def createObjects(init_pos, init_vel, masses):
     for i in range(len(masses)):
         objects.append(sphere(pos=vector(init_pos[i][0], init_pos[i][1], init_pos[i][2]), radius=size_scale*radius[i]/km_in_au, 
                         mass=masses[i], velocity=vector(init_vel[i][0], init_vel[i][1], init_vel[i][2]), name=object_names[i],
-                        make_trail=True, retain=200, trail_type="points", trail_radius=0.02))
-    objects[1].color = vector(0.5, 0.5, 0.5) # mercury
+                        color=colors[i], make_trail=True, retain=200, trail_type="points", trail_radius=0.007))
     objects[1].texture = textures.rough 
-    objects[2].color = vector(1, 0.8, 0.4) # venus
     objects[2].texture = textures.rock
+    objects[3].color=color.white
     objects[3].texture=textures.earth # earth
-    objects[4].color = vector(0.8, 0.1, 0.1) # mars
     objects[4].texture = textures.stones
     objects[5].texture = textures.wood_old # jupiter
-    objects[5].color = vector(0.7, 0.8, 0.7)
     objects[5].radius = objects[4].radius / 4 # scale down the size of jupiter 
-    objects[6].color = vector(1, 0.9, 0.7) # saturn
     objects[6].radius = objects[5].radius / 4 # scale down the size of saturn 
     objects[6].texture = textures.wood
-    objects[7].color = vector(0.7, 0.8, 0.8) # uranus
-    objects[8].color = vector(0.7, 0.8, 1) # neptune
     objects[8].texture = textures.metal
-    objects[9].color = vector(0.7, 0.6, 0.5) # pluto
 
 def simulateOrbitEulers():
     """
@@ -143,7 +138,7 @@ def resetObjects():
         obj.velocity = def_obj.velocity
         obj.mass = def_obj.mass
         slider.value = def_obj.mass
-    scene.camera.pos = vector(0, 0, 10)
+    scene.camera.pos = vector(0, 0, 2)
 
 def sliderMoved(slider):
     """
@@ -182,11 +177,11 @@ def createUI():
     global objects, sliders
     scene.append_to_caption('\nDrag the sliders to adjust the mass\n\n')
     for obj in objects:
-        sliders.append(slider( bind=sliderMoved, name=obj.name, length=scene.width - 50, max=7557896004349417000000000000000, value=obj.mass))
+        sliders.append(slider(bind=sliderMoved, name=obj.name, length=scene.width - 50, max=7557896004349417000000000000000, value=obj.mass))
         scene.append_to_caption(obj.name.capitalize(),'\n\n')
-    button( bind=buttonClicked, text="Start", name="start", pos=scene.title_anchor)
-    button( bind=buttonClicked, text="Stop", name="stop", pos=scene.title_anchor)
-    button( bind=buttonClicked, text="Reset", name="reset", pos=scene.title_anchor)
+    button(bind=buttonClicked, text="Start", name="start", pos=scene.title_anchor)
+    button(bind=buttonClicked, text="Stop", name="stop", pos=scene.title_anchor)
+    button(bind=buttonClicked, text="Reset", name="reset", pos=scene.title_anchor)
     scene.append_to_caption('\nRight button drag or Ctrl-drag to rotate "camera" to view scene.\n'
                             'To zoom, drag with middle button or Alt/Option depressed, or use scroll wheel.\n'
                             'On a two-button mouse, middle is left + right.\n'
@@ -207,7 +202,6 @@ def parseArguments():
     filename = args.filename
     if not filename:
         filename = "solar_system_points.csv"
-
     return filename
 
 def main():
@@ -221,7 +215,6 @@ def main():
     default_objects = copy.deepcopy(objects)
     createUI()
     simulateOrbitFrog()
-    simulateOrbitEulers()
 
 if __name__ == "__main__":
     main()
