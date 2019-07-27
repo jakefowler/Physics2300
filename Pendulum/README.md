@@ -1,7 +1,7 @@
 # Pendulum
 
 
-![Adjusted Solar System](/images/pendulum.png)
+![Pendulums](/images/pendulum.png)
 
-![Adjusted Solar System](/images/graphOfPendulum.png)
+![Graph of Pendulums](/images/graphOfPendulum.png)
 ### This program calculates and animates three pendulums and then graphs the data.
