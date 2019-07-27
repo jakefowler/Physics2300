@@ -1,9 +1,9 @@
 # Weather
 
 
-![Adjusted Solar System](/images/ogdenTemp.png)
+![Ogden Temperatures](/images/ogdenTemp.png)
 
-![Adjusted Solar System](/images/minMaxTemp.png)
+![Min Max Temperatures](/images/minMaxTemp.png)
 ## This program is used for parsing weather data
 1. It gets the name of the data file from the user on the command line
 2. Opens the data file
