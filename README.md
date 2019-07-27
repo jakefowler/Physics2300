@@ -1,1 +1,1 @@
-# Physics2300
+# Physics problems solved and animated using python
