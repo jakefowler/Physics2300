@@ -1,9 +1,9 @@
 # Weather
 
 
-![Ogden Temperatures](/images/ogdenTemp.png)
+![Ogden Temperatures](/Weather/images/ogdenTemp.PNG)
 
-![Min Max Temperatures](/images/minMaxTemp.png)
+![Min Max Temperatures](/Weather/images/minMaxTemp.PNG)
 ## This program is used for parsing weather data
 1. It gets the name of the data file from the user on the command line
 2. Opens the data file

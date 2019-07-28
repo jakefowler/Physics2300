@@ -1,1 +1,1 @@
-# Physics problems solved and animated using python
+# Physics problems solved and visualized using python

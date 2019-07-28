@@ -1,9 +1,9 @@
 # Weather Balloon
 
 
-![Time Temp and Altitude Graph](/images/timeTempAltitude.png)
+![Time Temp and Altitude Graph](/WeatherBalloon/images/timeTempAltitude.PNG)
 
-![Temp and Altitude Graph](/images/tempAltitude.png)
+![Temp and Altitude Graph](/WeatherBalloon/images/tempAltitude.PNG)
 ## This program is used for parsing data from a weather balloon
 
-The the data was mismatched with different intervals of recording and for different amount of times. It needed to be correlated and then graphed.
+The data was mismatched with different intervals of recording and for different amount of times. It needed to be correlated and then graphed.
