@@ -1,7 +1,7 @@
 # Pendulum
 
 
-![Pendulums](/images/pendulum.png)
+![Pendulums](/Pendulum/images/pendulum.png)
 
-![Graph of Pendulums](/images/graphOfPendulum.png)
+![Graph of Pendulums](/Pendulum/images/graphOfPendulum.PNG)
 ### This program calculates and animates three pendulums and then graphs the data.
